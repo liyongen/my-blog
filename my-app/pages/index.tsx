@@ -5,12 +5,15 @@ import classnames from 'classnames';
 import { prepareConnection } from 'db/index';
 
 import { Article, Tag } from 'db/entity';
-// import ListItem from 'components/ListItem';
+// import ListItem from 'components/ListItem';//这样会打包进去main.js
 import { IArticle } from 'pages/api/index';
 import request from 'service/fetch';
 import styles from './index.module.scss';
 
-const DynamicComponent = dynamic(() => import('components/ListItem'));//异步动态加载组件
+// 例子ListItem组件还没有返回时候 loading就展示其他组件
+//const DynamicComponentWithCustomLoading=dynamic(()=>import('../components/ListItem*){loading:()=> <p>...</p> })
+
+const DynamicComponent = dynamic(() => import('components/ListItem'));//异步动态加载组件，如果不写这个，ListItem组件是打包在首页的main .js里面的，打包的时候会多出一个components_ListItem_index_tsx.js?ts=1746851031428,可以作为一个优化代码体积的思路
 
 interface ITag {
   id: number;
@@ -80,7 +83,7 @@ const Home = (props: IProps) => {
       <div className="content-layout">
         {showAricles?.map((article) => (
           <>
-            {/* <ListItem article={article} /> */}
+            {/* <ListItem article={article} /> 注释掉就不会打包进去main.js*/}
             <DynamicComponent article={article} />
             <Divider />
           </>

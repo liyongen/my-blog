@@ -9,7 +9,7 @@ const nextConfig = {
 
 };
 
-const withMDX = require('@next/mdx')({
+const withMDX = require('@next/mdx')({//能解释.mdx的后缀文件
   extension: /\.mdx?$/,
   options: {
     remarkPlugins: [],

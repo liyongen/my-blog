@@ -19,37 +19,53 @@ export async function getServerSideProps({ params }: any) {
   const articleId = params?.id;//拿到这个url的文章id后查询数据库信息
   const db = await prepareConnection();
   const articleRepo = db.getRepository(Article);
-  if (articleId) {
-    try {
-      const article = await articleRepo.findOne({
-        where: {
-          id: articleId,
-        },
-        relations: ['user', 'comments', 'comments.user'],
-      });
+  // if (articleId) {
+  //   try {
+  //     const article = await articleRepo.findOne({
+  //       where: {
+  //         id: articleId,
+  //       },
+  //       relations: ['user', 'comments', 'comments.user'],
+  //     });
 
-      if (article) {
-        // 阅读次数 +1
-        article.views = article?.views + 1;
-        await articleRepo.save(article);
-      }
-      return {
-        props: {
-          article: JSON.parse(JSON.stringify(article)) || {},
-        },
-      };
-    } catch (error) {
-      console.log('error', error);
-      return {
-        notFound: true,
-      };
-    }
+  //     if (article) {
+  //       // 阅读次数 +1
+  //       article.views = article?.views + 1;
+  //       await articleRepo.save(article);
+  //     }
+  //     return {
+  //       props: {
+  //         article: JSON.parse(JSON.stringify(article)) || {},
+  //       },
+  //     };
+  //   } catch (error) {
+  //     console.log('error', error);
+  //     return {
+  //       notFound: true,
+  //     };
+  //   }
 
+  // }
+  // return {
+  //   notFound: true,
+  // };
+  const article = await articleRepo.findOne({
+    where: {
+      id: articleId,
+    },
+    relations: ['user', 'comments', 'comments.user'],
+  });
+
+  if (article) {
+    // 阅读次数 +1
+    article.views = article?.views + 1;
+    await articleRepo.save(article);
   }
   return {
-    notFound: true,
+    props: {
+      article: JSON.parse(JSON.stringify(article)) || {},
+    },
   };
-
 }
 
 const ArticleDetail = (props: IProps) => {

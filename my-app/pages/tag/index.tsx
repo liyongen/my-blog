@@ -131,3 +131,22 @@ const Tag = () => {
 };
 
 export default observer(Tag);
+
+// 页面中使用了 getServerSideProps、getStaticProps 等方法，才可能是 SSR。
+// 当前文件为 index.tsx，且没有这些方法的定义，则不是 Next.js 的 SSR 页面。
+// 当前代码中通过 useEffect 在组件挂载时请求 /api/tag/get 获取标签数据。
+// 数据获取和更新都在浏览器端完成，这是典型的 CSR 行为。
+// SSR 框架如 Next.js 会要求你导出默认函数组件以外的内容，例如：
+// ts
+// export async function getServerSideProps() { ... }
+// 当前只导出了一个被 observer 包裹的 React 组件：
+// ts
+// export default observer(Tag);
+// 没有 SSR 相关的数据预加载函数，进一步说明这是一个 CSR 页面。
+// 最终结论：
+// 这个页面是一个 CSR（客户端渲染）页面，理由如下：
+
+// 使用 useEffect 发起 API 请求获取数据；
+// 没有 SSR 框架特有的生命周期或数据预取方法；
+// 导出的是普通 React 组件；
+// 数据展示完全依赖浏览器端交互与网络请求。

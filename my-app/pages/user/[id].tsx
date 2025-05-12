@@ -13,20 +13,22 @@ import { prepareConnection } from 'db/index';
 import { User, Article } from 'db/entity';
 import styles from './index.module.scss';
 
+//改造成ssg页面，最明显的就是getStaticPaths
 export async function getStaticPaths() {
   // user/[id]
   const db = await prepareConnection();
   const users = await db.getRepository(User).find();
-  // 生成类似 [{ params: { id: '1' } }, { params: { id: '2' } }, ...] 的数组结构。
+  // 生成类似 [{params: 1}, {params: 2}, {params: 3}]的数组结构。
   const userIds = users?.map((user) => ({ params: { id: String(user?.id) } }));
 
   // [{params: 1}, {params: 2}, {params: 3}]
   return {
     paths: userIds,
-    fallback: 'blocking',
+    fallback: 'blocking',//如果地false就是path找不到就会返回404页面   true的话就是后台找不到页面就要你自己提供一个具体的页面，当后台返回结果时候，你就显示自己写的页面。不是默认返回404页面，blocking就是一直在等你后台构造好页面时候才展现出来
   };
 }
 
+// 这里的params是一个对象，里面有一个id属性，代表的是用户的id与这里的params是一致的---------------------const userIds = users?.map((user) => ({ params: { id: String(user?.id) } }));
 export async function getStaticProps({ params }: { params: any }) {
   const userId = params?.id;
   const db = await prepareConnection();
@@ -54,6 +56,7 @@ export async function getStaticProps({ params }: { params: any }) {
   };
 }
 
+//本来是ssr的渲染页面
 // export async function getServerSideProps({ params }: { params: any }) {
 //   const userId = params?.id;
 //   const db = await prepareConnection();
